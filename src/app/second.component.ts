@@ -1,5 +1,6 @@
 import { Component} from '@angular/core';
-import { interval, take, switchMap, mergeMap, mergeAll, of, repeat, delay, iif } from 'rxjs';
+import { CancellationService } from './cancel.service';
+import { interval, take, switchMap, mergeMap, mergeAll, of, repeat, delay, iif, takeWhile } from 'rxjs';
 
 const numbers = interval(1000).pipe(take(20));
   
@@ -14,33 +15,43 @@ const numbers = interval(1000).pipe(take(20));
 })
 
 export class SecondComponent {
+    constructor(private CancellationService: CancellationService){}
+
     firstTask(){
+        this.CancellationService.run();
+
         const repeatedValue = numbers.pipe(
             switchMap(val => of(val).pipe(delay(200),repeat(10))
         ));
         
-        repeatedValue.subscribe(val => console.log(`value:${val}`));
+        repeatedValue.pipe(takeWhile(() => !this.CancellationService.getCancellationStatus())).subscribe(val => console.log(`value:${val}`));
 
     }
 
     secondTask(){
+        this.CancellationService.run();
+
         const newStreams = numbers.pipe(
             mergeMap(() => interval(100).pipe(take(10)))
         );
         
-        newStreams.subscribe(val => console.log(`value:${val}`));
+        newStreams.pipe(takeWhile(() => !this.CancellationService.getCancellationStatus())).subscribe(val => console.log(`value:${val}`));
 
     }
 
     thirdTask(){
+        this.CancellationService.run();
+
         const forthRepeat = numbers.pipe(mergeMap(val => iif(() => val % 4 === 0, of(val).pipe(delay(400), repeat(5)), "" )))
         
-        forthRepeat.subscribe(val => console.log(`value:${val}`));
+        forthRepeat.pipe(takeWhile(() => !this.CancellationService.getCancellationStatus())).subscribe(val => console.log(`value:${val}`));
     }
 
     forthTask(){
+        this.CancellationService.run();
+
         const mergedValues = numbers.pipe(val => of(val).pipe(delay(300),repeat(5)), mergeAll())
         
-        mergedValues.subscribe(val => console.log(`value:${val}`));
+        mergedValues.pipe(takeWhile(() => !this.CancellationService.getCancellationStatus())).subscribe(val => console.log(`value:${val}`));
     }
 }

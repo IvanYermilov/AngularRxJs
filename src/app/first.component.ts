@@ -1,5 +1,6 @@
 import { Component} from '@angular/core';
-import { interval, map, take, tap, filter } from 'rxjs';
+import { interval, map, take, tap, filter, takeWhile } from 'rxjs';
+import { CancellationService } from './cancel.service';
 
 const numbers = interval(500).pipe(take(20));
   
@@ -13,27 +14,34 @@ const numbers = interval(500).pipe(take(20));
 })
 
 export class FirstComponent {
+    constructor(private CancellationService: CancellationService){}
+
     firstTask(){
+        this.CancellationService.run();
+
         const multipliedValues = numbers.pipe(
             tap(val => console.log(`Initial value:${val}`)),
             map(val => val * 3)
         );
         
-        multipliedValues.subscribe(val => console.log(`Multiplied value:${val}`));
-
+        multipliedValues.pipe(takeWhile(() => !this.CancellationService.getCancellationStatus())).subscribe(val => console.log(`Multiplied value:${val}`));
     }
 
     secondTask(){
+        this.CancellationService.run();
+
         const firstSevenValues = numbers.pipe(take(7));
         
-        firstSevenValues.subscribe(val => console.log(`Value:${val}`));
+        firstSevenValues.pipe(takeWhile(() => !this.CancellationService.getCancellationStatus())).subscribe(val => console.log(`Value:${val}`));
     }
 
     thirdTask(){
+        this.CancellationService.run();
+
         const evenValues = numbers.pipe(
             filter(val => val % 2 === 0)
         );
         
-        evenValues.subscribe(val => console.log(`Even value:${val}`));
+        evenValues.pipe(takeWhile(() => !this.CancellationService.getCancellationStatus())).subscribe(val => console.log(`Even value:${val}`));
     }
 }
