@@ -1,57 +1,59 @@
 import { Component} from '@angular/core';
 import { CancellationService } from './cancel.service';
-import { interval, take, switchMap, mergeMap, mergeAll, of, repeat, delay, iif, takeWhile } from 'rxjs';
+import { interval, take, switchMap, mergeMap, concatMap, of, repeat, delay, takeWhile, filter, exhaustMap } from 'rxjs';
 
 const numbers = interval(1000).pipe(take(20));
   
 @Component({
     selector: 'second-comp',
-    template: `<h3>The second component</h3>
-    <button (click) = "firstTask()">Repeat</button>
-    <button (click) = "secondTask()">New stream</button>
-    <button (click) = "thirdTask()">Each 4th repeat</button>
-    <button (click) = "forthTask()">Independent value repeat</button>`,
-    styles: ['button + button { margin-left: 10px;}']
+    templateUrl: './templates/second.component.html',
+    styleUrls: ['./styles/button-styles.css']
 })
 
 export class SecondComponent {
-    constructor(private CancellationService: CancellationService){}
+    constructor(private cancellationService: CancellationService){}
 
-    firstTask(){
-        this.CancellationService.run();
+    public firstTask(){
+        this.cancellationService.isCancelled.next(false);
 
         const repeatedValue = numbers.pipe(
             switchMap(val => of(val).pipe(delay(200),repeat(10))
         ));
         
-        repeatedValue.pipe(takeWhile(() => !this.CancellationService.getCancellationStatus())).subscribe(val => console.log(`value:${val}`));
+        repeatedValue.pipe(takeWhile(() => !this.cancellationService.isCancelled.getValue()))
+            .subscribe(val => console.log(`value:${val}`));
 
     }
 
-    secondTask(){
-        this.CancellationService.run();
+    public secondTask(){
+        this.cancellationService.isCancelled.next(false);
 
         const newStreams = numbers.pipe(
-            mergeMap(() => interval(100).pipe(take(10)))
+            concatMap(() => interval(100).pipe(take(10)))
         );
         
-        newStreams.pipe(takeWhile(() => !this.CancellationService.getCancellationStatus())).subscribe(val => console.log(`value:${val}`));
+        newStreams.pipe(takeWhile(() => !this.cancellationService.isCancelled.getValue()))
+            .subscribe(val => console.log(`value:${val}`));
 
     }
 
-    thirdTask(){
-        this.CancellationService.run();
+    public thirdTask(){
+        this.cancellationService.isCancelled.next(false);
 
-        const forthRepeat = numbers.pipe(mergeMap(val => iif(() => val % 4 === 0, of(val).pipe(delay(400), repeat(5)), "" )))
+        const eachForth = numbers.pipe(filter(val => val % 4 === 0))
+
+        const forthRepeat = eachForth.pipe(exhaustMap(val => of(val).pipe(delay(400), repeat(5))))
         
-        forthRepeat.pipe(takeWhile(() => !this.CancellationService.getCancellationStatus())).subscribe(val => console.log(`value:${val}`));
+        forthRepeat.pipe(takeWhile(() => !this.cancellationService.isCancelled.getValue()))
+            .subscribe(val => console.log(`value:${val}`));
     }
 
-    forthTask(){
-        this.CancellationService.run();
+    public forthTask(){
+        this.cancellationService.isCancelled.next(false);
 
-        const mergedValues = numbers.pipe(val => of(val).pipe(delay(300),repeat(5)), mergeAll())
+        const mergedValues = numbers.pipe(mergeMap(val => of(val).pipe(delay(300),repeat(5))));
         
-        mergedValues.pipe(takeWhile(() => !this.CancellationService.getCancellationStatus())).subscribe(val => console.log(`value:${val}`));
+        mergedValues.pipe(takeWhile(() => !this.cancellationService.isCancelled.getValue()))
+            .subscribe(val => console.log(`value:${val}`));
     }
 }

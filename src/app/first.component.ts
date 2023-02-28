@@ -6,42 +6,42 @@ const numbers = interval(500).pipe(take(20));
   
 @Component({
     selector: 'first-comp',
-    template: `<h3>The first component</h3>
-    <button (click) = "firstTask()">Multiply by 3</button>
-    <button (click) = "secondTask()">Take 7</button>
-    <button (click) = "thirdTask()">Even values</button>`,
-    styles: ['button + button { margin-left: 10px;}']
+    templateUrl: './templates/first.component.html',
+    styleUrls: ['./styles/button-styles.css']
 })
 
 export class FirstComponent {
-    constructor(private CancellationService: CancellationService){}
+    constructor(private cancellationService: CancellationService){}
 
-    firstTask(){
-        this.CancellationService.run();
+    public firstTask(){
+        this.cancellationService.isCancelled.next(false);
 
         const multipliedValues = numbers.pipe(
             tap(val => console.log(`Initial value:${val}`)),
             map(val => val * 3)
         );
         
-        multipliedValues.pipe(takeWhile(() => !this.CancellationService.getCancellationStatus())).subscribe(val => console.log(`Multiplied value:${val}`));
+        multipliedValues.pipe(takeWhile(() => !this.cancellationService.isCancelled.getValue()))
+            .subscribe(val => console.log(`Multiplied value:${val}`));
     }
 
-    secondTask(){
-        this.CancellationService.run();
+    public secondTask(){
+        this.cancellationService.isCancelled.next(false);
 
         const firstSevenValues = numbers.pipe(take(7));
         
-        firstSevenValues.pipe(takeWhile(() => !this.CancellationService.getCancellationStatus())).subscribe(val => console.log(`Value:${val}`));
+        firstSevenValues.pipe(takeWhile(() => !this.cancellationService.isCancelled.getValue()))
+            .subscribe(val => console.log(`Value:${val}`));
     }
 
-    thirdTask(){
-        this.CancellationService.run();
+    public thirdTask(){
+        this.cancellationService.isCancelled.next(false);
 
         const evenValues = numbers.pipe(
             filter(val => val % 2 === 0)
         );
         
-        evenValues.pipe(takeWhile(() => !this.CancellationService.getCancellationStatus())).subscribe(val => console.log(`Even value:${val}`));
+        evenValues.pipe(takeWhile(() => !this.cancellationService.isCancelled.getValue()))
+            .subscribe(val => console.log(`Even value:${val}`));
     }
 }

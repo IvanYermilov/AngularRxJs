@@ -1,23 +1,16 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 
 export class CancellationService {
-    private isCancelled:boolean = false;
-
-    getCancellationStatus(){
-      return this.isCancelled;
-    }
+    public isCancelled = new BehaviorSubject<boolean>(false);
 
     public cancel(){
-        this.isCancelled = true;
+      this.isCancelled.next(true);
     }
-
-    public run(){
-      this.isCancelled = false;
-  }
 
   constructor() { }
 }
