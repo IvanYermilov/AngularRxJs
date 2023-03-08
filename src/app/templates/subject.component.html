@@ -1,0 +1,39 @@
+
+    <h3>Subjects component</h3>
+
+    <div class="subjects-section">
+        <div class="subject-template">
+            <h1>Subject</h1>
+            <input name="Subject value" type="number" [(ngModel)]="subjectValue" />
+            <div class="controlls">
+                <button (click) = "subjectNextValue()">Add</button>
+                <button (click) = "subjectComplete()">Complete</button>
+            </div>
+        </div>
+        <div class="subject-template">
+            <h1>Async Subject</h1>
+            <input name="Subject value" type="number" [(ngModel)]="asyncSubjectValue" />
+            <div class="controlls">
+                <button (click) = "asyncSubjectNextValue()">Add</button>
+                <button (click) = "asyncSubjectComplete()">Complete</button>
+            </div>
+        </div>
+        <div class="subject-template">
+            <h1>Replay Subject</h1>
+            <input name="Subject value" type="number" [(ngModel)]="replaySubjectValue" />
+            <div class="controlls">
+                <button (click) = "replaySubjectNextValue()">Add</button>
+                <button (click) = "addReplaySubjectSubscriber()">Add subscriber</button>
+                <button (click) = "replaySubjectComplete()">Complete</button>
+            </div>
+        </div>
+        <div class="subject-template">
+            <h1>Behavior Subject</h1>
+            <input name="Subject value" type="number" [(ngModel)]="behaviorSubjectValue" />
+            <div class="controlls">
+                <button (click) = "behaviorSubjectNextValue()">Add</button>
+                <button (click) = "behaviorSubjectCurrentValue()">Current value</button>
+                <button (click) = "behaviorSubjectComplete()">Complete</button>
+            </div>
+        </div>
+    </div>

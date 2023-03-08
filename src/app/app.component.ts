@@ -7,6 +7,8 @@ import { CancellationService } from './cancel.service';
     styleUrls: ['./styles/app.component.css']
 })
 export class AppComponent { 
+    public showElement:boolean = true;
+
     constructor(private cancellationService: CancellationService){}
 
     public cancel(){
