@@ -1,6 +1,7 @@
 import { Component} from '@angular/core';
 import { CancellationService } from './cancel.service';
 import { interval, take, map, combineLatest, forkJoin, zip, takeWhile } from 'rxjs';
+import { AppComponent }   from './app.component';
 
 const source1 = interval(200).pipe(take(10),map((val) => 'source1 val = ' + val));
 const source2 = interval(300).pipe(take(10),map((val) => 'source2 val = ' + val));
@@ -12,7 +13,11 @@ const source3 = interval(400).pipe(take(10),map((val) => 'source3 val = ' + val)
     styleUrls: ['./styles/button-styles.css']
 })
 export class ThirdComponent {
-    constructor(private cancellationService: CancellationService){}
+    constructor(private cancellationService: CancellationService, private appComponent: AppComponent){}
+
+    ngOnInit(): void {
+        this.appComponent.showElement = true;
+    }
 
     public firstTask(){
         this.cancellationService.isCancelled.next(false);

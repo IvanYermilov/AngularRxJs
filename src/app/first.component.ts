@@ -1,6 +1,7 @@
 import { Component} from '@angular/core';
 import { interval, map, take, tap, filter, takeWhile } from 'rxjs';
 import { CancellationService } from './cancel.service';
+import { AppComponent }   from './app.component';
 
 const numbers = interval(500).pipe(take(20));
   
@@ -11,7 +12,11 @@ const numbers = interval(500).pipe(take(20));
 })
 
 export class FirstComponent {
-    constructor(private cancellationService: CancellationService){}
+    constructor(private cancellationService: CancellationService, private appComponent: AppComponent){}
+    
+    ngOnInit(): void {
+        this.appComponent.showElement = true;
+    }
 
     public firstTask(){
         this.cancellationService.isCancelled.next(false);

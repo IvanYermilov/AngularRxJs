@@ -3,7 +3,8 @@
         <a routerLink="first-component">First component</a>
         <a routerLink="second-component">Second component</a>
         <a routerLink="third-component">Third component</a>
+        <a routerLink="subj-comp">Subjects component</a>
     </nav>
     <router-outlet></router-outlet>
 </div>
-<div class="cancel-button"><button (click) = "cancel()">Cancel</button></div>
+<div class="cancel-button" *ngIf="showElement"><button (click) = "cancel()">Cancel</button></div>
