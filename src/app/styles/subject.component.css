@@ -1,0 +1,24 @@
+.subjects-section {
+    display: flex;
+    justify-content: flex-start;
+}
+
+h1 {
+    text-align: center;
+}
+
+.subject-template {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.subject-template + .subject-template {
+    margin-left: 10px;
+}
+
+.controlls {
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-start;
+}
